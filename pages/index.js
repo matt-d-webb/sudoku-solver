@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Footer from "../components/Footer";
-import { Fragment, useState } from "react";
+import { Fragment, useState, useWindowSize } from "react";
+import Confetti from 'react-confetti'
 import { solver, validInsert, exampleBoard as initialState } from "../solver/sudoku";
 
 function classNames(...classes) {
@@ -11,23 +12,28 @@ export default function Home() {
   const [board, setBoard] = useState([...initialState.map((r) => [...r])]);
   const [invalidChar, setInvalidChar] = useState(false);
   const [invalidVal, setInvalidVal] = useState(false);
+  const [isSolved, setIsSolved] = useState(false);
 
   const solveSudoku = () => {
     setInvalidChar(false);
     setInvalidVal(false);
+    setIsSolved(false);
     const solvedBoard = solver([...board.map((r) => [...r])]);
+    setIsSolved(true);
     setBoard(solvedBoard);
   };
 
   const exampleSudoku = () => {
     setInvalidChar(false);
     setInvalidVal(false);
+    setIsSolved(false);
     setBoard(initialState);
   };
 
   const resetEmpty = () => {
     setInvalidChar(false);
     setInvalidVal(false);
+    setIsSolved(false);
     setBoard([...new Array(9).fill([]).map((_) => [...new Array(9).fill(0)])]);
   };
 
@@ -84,11 +90,12 @@ export default function Home() {
       </Head>
 
       <main className="p-4 sm:p-10">
-        <div>
 
-          <h1 className="text-3xl sm:text-4xl tracking-tight font-extrabold text-white text-center">
+          <h1 className="text-3xl py-2 sm:text-4xl tracking-tight font-extrabold text-white text-center">
             Sudoku Solver
           </h1>
+
+          { isSolved && <Confetti recycle={false} /> }
 
           { /* SUDOKU GRID */ }
           <div className="flex justify-center items-center mt-5 sm:mt-8">
@@ -172,7 +179,7 @@ export default function Home() {
               Clear
             </button>
           </div>
-        </div>
+
       </main>
       <Footer />
     </div>
