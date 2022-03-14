@@ -1,4 +1,4 @@
-export default function Footer() {
+export default function Footer(): JSX.Element {
   return (
     <footer className="bg-cyan-900 border-t-2 border-cyan-700 sticky top-[100vh]">
       <div className="max-w-7xl mx-auto py-4 sm:py-6 px-4 overflow-hidden">
