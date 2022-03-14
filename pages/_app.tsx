@@ -1,7 +1,6 @@
-import React from 'react';
 import '../styles/globals.css'
 
-function Sudoku({ Component, pageProps }): React.FC {
+function Sudoku({ Component, pageProps }) {
   return <Component {...pageProps} />
 }
 
