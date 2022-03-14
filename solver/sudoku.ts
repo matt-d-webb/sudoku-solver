@@ -1,22 +1,5 @@
-export const exampleBoard = [
-  [7, 8, 0, 4, 0, 0, 1, 2, 0],
-  [6, 0, 0, 0, 7, 5, 0, 0, 9],
-  [0, 0, 0, 6, 0, 1, 0, 7, 8],
-  [0, 0, 7, 0, 4, 0, 2, 6, 0],
-  [0, 0, 1, 0, 5, 0, 9, 3, 0],
-  [9, 0, 4, 0, 6, 0, 0, 0, 5],
-  [0, 7, 0, 3, 0, 0, 0, 1, 2],
-  [1, 2, 0, 0, 0, 7, 4, 0, 0],
-  [0, 4, 9, 2, 0, 6, 0, 0, 7],
-];
 
-export const solver = (board) => {
-  const boardCopy = [...board.map((r) => [...r])];
-  initiateSolving(0, 0, boardCopy);
-  return boardCopy;
-};
-
-const initiateSolving = (row, col, board) => {
+const initiateSolving = (row: number, col: number, board: Board): Boolean => {
   let currentR = row;
   let currentC = col;
 
@@ -34,7 +17,7 @@ const initiateSolving = (row, col, board) => {
   return initiateSolving(currentR, currentC + 1, board);
 };
 
-const tryValue = (row, col, board) => {
+const tryValue = (row: number, col: number, board: Board): Boolean => {
   for (let v = 1; v < 10; v++) {
     if (validInsert(v, row, col, board)) {
       board[row][col] = v;
@@ -46,7 +29,27 @@ const tryValue = (row, col, board) => {
   return false;
 };
 
-export const validInsert = (value, row, col, board) => {
+export type Board = number[][];
+
+export const exampleBoard: Board = [
+  [7, 8, 0, 4, 0, 0, 1, 2, 0],
+  [6, 0, 0, 0, 7, 5, 0, 0, 9],
+  [0, 0, 0, 6, 0, 1, 0, 7, 8],
+  [0, 0, 7, 0, 4, 0, 2, 6, 0],
+  [0, 0, 1, 0, 5, 0, 9, 3, 0],
+  [9, 0, 4, 0, 6, 0, 0, 0, 5],
+  [0, 7, 0, 3, 0, 0, 0, 1, 2],
+  [1, 2, 0, 0, 0, 7, 4, 0, 0],
+  [0, 4, 9, 2, 0, 6, 0, 0, 7],
+];
+
+export const solver = (board: Board): Board => {
+  const boardCopy = [...board.map((r) => [...r])];
+  initiateSolving(0, 0, boardCopy);
+  return boardCopy;
+};
+
+export const validInsert = (value: number, row: number, col: number, board: Board): Boolean => {
   const rowValid = !board[row].includes(value);
   const colValid = !board.map((r) => r[col]).includes(value);
 
@@ -62,3 +65,6 @@ export const validInsert = (value, row, col, board) => {
   }
   return true;
 };
+
+
+
