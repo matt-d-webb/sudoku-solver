@@ -4,7 +4,7 @@ import React, { Fragment, useState } from "react";
 import Confetti from "react-confetti";
 import { solver, validInsert, exampleBoard as initialState } from "../solver/sudoku";
 
-function classNames(...classes: [string]): string {
+function classNames(...classes: string[]): string {
   return classes.filter(Boolean).join(" ");
 }
 
@@ -18,7 +18,7 @@ function getWindowDimensions() {
 type Input = number | string | undefined;
 type Board = number[][]
 
-export default function Home(): React.FC {
+export default function Home(): JSX.Element {
 
   const [board, setBoard]: [Board, Function] = useState([...initialState.map((r) => [...r])]);
   const [invalidChar, setInvalidChar]: [Boolean, Function] = useState(false);
