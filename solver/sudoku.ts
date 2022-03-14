@@ -5,7 +5,6 @@ const initiateSolving = (row: number, col: number, board: Board): Boolean => {
   if (currentC === board[currentR].length) {
     currentR++;
     currentC = 0;
-    // checked all cells
     if (currentR === board.length) return true;
   }
 
@@ -49,7 +48,7 @@ export const emptyBoard = (): Board => {
 export const solver = (board: Board): Board => {
   const boardCopy = [...board.map((r) => [...r])];
   initiateSolving(0, 0, boardCopy);
-  return boardCopy;
+  return [...boardCopy.map((r) => [...r])];
 };
 
 export const validInsert = (value: number, row: number, col: number, board: Board): Boolean => {
@@ -69,7 +68,12 @@ export const validInsert = (value: number, row: number, col: number, board: Boar
   return true;
 };
 
-export const randomBoard = (difficulty: number = 30): Board => {
+/**
+ * TODO: this can generate "unsolvable" sudoku's puzzles - fix it! 
+ * @param difficulty 
+ * @returns 
+ */
+export const randomBoard = (difficulty: number = 20): Board => {
 
   const board = emptyBoard();
   const rand = (max: number): number => Math.floor(Math.random() * (max - 1 + 1) + 1);

@@ -9,6 +9,7 @@ import {
   validInsert,
   exampleBoard as initialState,
   randomBoard,
+  emptyBoard
 } from "../solver/sudoku";
 
 function classNames(...classes: string[]): string {
@@ -47,17 +48,23 @@ export default function Home(): JSX.Element {
     setInvalidChar(false);
     setInvalidVal(false);
     setIsSolved(false);
-    const empty: Board = [
-      ...new Array(9).fill([]).map((_) => [...new Array(9).fill(0)]),
-    ];
+    const empty: Board = emptyBoard();
     setBoard(empty);
   };
 
+  const exampleSudoku = (): void => {
+    setInvalidChar(false);
+    setInvalidVal(false);
+    setIsSolved(false);
+    setBoard(initialState);
+  };
+
+  // TODO: invalid option for random valid sudoku generation: 
   const generateRandomBoard = (): void => {
     setInvalidChar(false);
     setInvalidVal(false);
     setIsSolved(false);
-    setBoard(randomBoard());
+    setBoard([...randomBoard().map((r) => [...r])]);
   };
 
   const updateBoard = (value: Input, row: number, col: number): void => {
@@ -113,7 +120,7 @@ export default function Home(): JSX.Element {
       </Head>
 
       <main className="p-4 sm:p-8">
-        <p className="mx-auto text-center">
+        <p className="mx-auto text-center mt-4 sm:mt-0">
           <Image src={Logo} alt="Sudoku Solver" width={50} height={50} />
         </p>
         <h1
@@ -132,7 +139,7 @@ export default function Home(): JSX.Element {
         )}
 
         {/* SUDOKU GRID */}
-        <div className="flex justify-center items-center mt-5 sm:mt-8">
+        <div className="flex justify-center items-center mt-5 sm:mt-4">
           <div className={classNames("grid grid-cols-9 text-sm shadow")}>
             {board.map((rows, rowIdx) => {
               return (
@@ -194,25 +201,24 @@ export default function Home(): JSX.Element {
           <button
             type="button"
             id="solveBtn"
-            className="inline-flex items-center px-24 py-3 border-2 border-pink-700 text-md font-medium rounded text-white bg-pink-900 hover:bg-pink-700"
+            className="inline-flex items-center px-28 py-3 border-2 border-pink-700 text-md font-medium rounded text-white bg-pink-900 hover:bg-pink-700"
             onClick={() => solveSudoku()}
           >
             Solve
           </button>
         </div>
-        <div className="flex justify-center items-center gap-3">
+        <div className="flex justify-center items-center gap-2 sm:mb-2">
           <button
             type="button"
-            id="randBtn"
-            className="inline-flex mt-2 items-center px-7 py-2 border-2 border-cyan-700 text-md font-medium rounded text-white bg-cyan-900 hover:bg-cyan-700"
-            onClick={() => generateRandomBoard()}
+            className="inline-flex mt-2 items-center px-10 py-2 border-2 border-cyan-700 text-md font-medium rounded text-white bg-cyan-900 hover:bg-cyan-700"
+            onClick={() => exampleSudoku()}
           >
-            Random
+            Example
           </button>
           <button
             type="button"
             id="clearBtn"
-            className="inline-flex mt-2 items-center px-7 py-2 border-2 border-gray-700 text-md font-medium rounded text-white bg-gray-900 hover:bg-gray-700"
+            className="inline-flex mt-2 items-center px-9 py-2 border-2 border-gray-700 text-md font-medium rounded text-white bg-gray-900 hover:bg-gray-700"
             onClick={() => resetEmpty()}
           >
             Clear
