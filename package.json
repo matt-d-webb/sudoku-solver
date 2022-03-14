@@ -1,6 +1,6 @@
 {
   "name": "suduko-solver",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@playwright/test": "^1.19.2",
     "next": "12.1.0",
     "react": "17.0.2",
     "react-confetti": "^6.0.1",

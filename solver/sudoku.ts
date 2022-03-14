@@ -1,4 +1,3 @@
-
 const initiateSolving = (row: number, col: number, board: Board): Boolean => {
   let currentR = row;
   let currentC = col;
@@ -13,18 +12,16 @@ const initiateSolving = (row: number, col: number, board: Board): Boolean => {
   if (board[currentR][currentC] === 0) {
     return tryValue(currentR, currentC, board);
   }
-
   return initiateSolving(currentR, currentC + 1, board);
 };
 
 const tryValue = (row: number, col: number, board: Board): Boolean => {
-  for (let v = 1; v < 10; v++) {
-    if (validInsert(v, row, col, board)) {
-      board[row][col] = v;
+  for (let value = 1; value < 10; value++) {
+    if (validInsert(value, row, col, board)) {
+      board[row][col] = value;
       if (initiateSolving(row, col + 1, board)) return true;
     }
   }
-
   board[row][col] = 0;
   return false;
 };
@@ -42,6 +39,12 @@ export const exampleBoard: Board = [
   [1, 2, 0, 0, 0, 7, 4, 0, 0],
   [0, 4, 9, 2, 0, 6, 0, 0, 7],
 ];
+
+export const emptyBoard = (): Board => {
+  return [
+    ...new Array(9).fill([]).map((_) => [...new Array(9).fill(0)])
+  ];
+}
 
 export const solver = (board: Board): Board => {
   const boardCopy = [...board.map((r) => [...r])];
@@ -66,5 +69,24 @@ export const validInsert = (value: number, row: number, col: number, board: Boar
   return true;
 };
 
+export const randomBoard = (difficulty: number = 30): Board => {
+
+  const board = emptyBoard();
+  const rand = (max: number): number => Math.floor(Math.random() * (max - 1 + 1) + 1);
+
+  let filledValues = 0;
+
+  while(filledValues <= difficulty) {
+    const value = rand(9);
+    const row = rand(8);
+    const col = rand(8);
+
+    if(validInsert(value, row, col, board)) {
+      board[row][col] = value;
+      filledValues++;
+    }
+  }
+  return board;
+};
 
 

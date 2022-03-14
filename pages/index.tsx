@@ -1,8 +1,15 @@
 import Head from "next/head";
+import Image from "next/image";
 import Footer from "../components/Footer";
 import React, { Fragment, useState } from "react";
 import Confetti from "react-confetti";
-import { solver, validInsert, exampleBoard as initialState } from "../solver/sudoku";
+import Logo from "../img/logo.svg";
+import {
+  solver,
+  validInsert,
+  exampleBoard as initialState,
+  randomBoard,
+} from "../solver/sudoku";
 
 function classNames(...classes: string[]): string {
   return classes.filter(Boolean).join(" ");
@@ -11,16 +18,18 @@ function classNames(...classes: string[]): string {
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
   return {
-    width,
-    height
+    width: width > 1000 ? width - 100 : width,
+    height: height > 700 ? height - 50 : height,
   };
 }
+
 type Input = number | string | undefined;
-type Board = number[][]
+type Board = number[][];
 
 export default function Home(): JSX.Element {
-
-  const [board, setBoard]: [Board, Function] = useState([...initialState.map((r) => [...r])]);
+  const [board, setBoard]: [Board, Function] = useState([
+    ...initialState.map((r) => [...r]),
+  ]);
   const [invalidChar, setInvalidChar]: [Boolean, Function] = useState(false);
   const [invalidVal, setInvalidVal]: [Boolean, Function] = useState(false);
   const [isSolved, setIsSolved]: [Boolean, Function] = useState(false);
@@ -34,34 +43,38 @@ export default function Home(): JSX.Element {
     setBoard(solvedBoard);
   };
 
-  const exampleSudoku = (): void => {
-    setInvalidChar(false);
-    setInvalidVal(false);
-    setIsSolved(false);
-    setBoard(initialState);
-  };
-
   const resetEmpty = (): void => {
     setInvalidChar(false);
     setInvalidVal(false);
     setIsSolved(false);
-    const empty: Board = [...new Array(9).fill([]).map((_) => [...new Array(9).fill(0)])]
+    const empty: Board = [
+      ...new Array(9).fill([]).map((_) => [...new Array(9).fill(0)]),
+    ];
     setBoard(empty);
+  };
+
+  const generateRandomBoard = (): void => {
+    setInvalidChar(false);
+    setInvalidVal(false);
+    setIsSolved(false);
+    setBoard(randomBoard());
   };
 
   const updateBoard = (value: Input, row: number, col: number): void => {
     if (!validUserInput(value, row, col)) return;
 
     setBoard((prev: Board) => {
-      const newState: Board = [...prev.map((rows: number[], rowIdx: number) => {
-        return rows.map((colVal: number, colIdx: number) => {
-          if (row === rowIdx && col == colIdx) {
-            return prev[rowIdx][colIdx] = Number(value);
-          } else {
-            return colVal;
-          }
-        });
-      })]
+      const newState: Board = [
+        ...prev.map((rows: number[], rowIdx: number) => {
+          return rows.map((colVal: number, colIdx: number) => {
+            if (row === rowIdx && col == colIdx) {
+              return (prev[rowIdx][colIdx] = Number(value));
+            } else {
+              return colVal;
+            }
+          });
+        }),
+      ];
       return newState;
     });
   };
@@ -94,20 +107,31 @@ export default function Home(): JSX.Element {
   return (
     <div className="h-screen bg-slate-900">
       <Head>
-        <title>Sudoku Solver</title>
+        <title>Sudoku Solver | React</title>
         <meta name="description" content="Sudoku Solver" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="p-4 sm:p-10">
-
-        <h1 className="text-3xl py-2 sm:text-4xl tracking-tight font-extrabold text-white text-center">
+      <main className="p-4 sm:p-8">
+        <p className="mx-auto text-center">
+          <Image src={Logo} alt="Sudoku Solver" width={50} height={50} />
+        </p>
+        <h1
+          id="title"
+          className="text-3xl py-2 sm:text-4xl tracking-tight font-extrabold text-white text-center"
+        >
           Sudoku Solver
         </h1>
 
-        {isSolved && <Confetti tweenDuration={8000} recycle={false} {...getWindowDimensions()} />}
+        {isSolved && (
+          <Confetti
+            tweenDuration={8000}
+            recycle={false}
+            {...getWindowDimensions()}
+          />
+        )}
 
-        { /* SUDOKU GRID */}
+        {/* SUDOKU GRID */}
         <div className="flex justify-center items-center mt-5 sm:mt-8">
           <div className={classNames("grid grid-cols-9 text-sm shadow")}>
             {board.map((rows, rowIdx) => {
@@ -116,13 +140,13 @@ export default function Home(): JSX.Element {
                   {rows.map((col, colIdx) => {
                     const even =
                       rowIdx % 2 === 0 ? colIdx % 2 === 0 : colIdx % 2 !== 0;
-                    const addBorderR =
-                      (colIdx + 1) % 3 === 0 && colIdx + 1 < 9;
-                    const addBorderB =
-                      (rowIdx + 1) % 3 === 0 && rowIdx + 1 < 9;
+                    const addBorderR = (colIdx + 1) % 3 === 0 && colIdx + 1 < 9;
+                    const addBorderB = (rowIdx + 1) % 3 === 0 && rowIdx + 1 < 9;
+                    const id = rowIdx * rows.length + colIdx + 1;
                     return (
                       <div key={colIdx}>
                         <input
+                          id={`grid-item-${id.toString()}`}
                           key={col}
                           onChange={(e) =>
                             updateBoard(e.target.value, rowIdx, colIdx)
@@ -144,7 +168,7 @@ export default function Home(): JSX.Element {
           </div>
         </div>
 
-        { /* ERROR STATES */}
+        {/* ERROR STATES */}
         <div className="flex justify-center items-center mt-4">
           {invalidChar && (
             <p className="font-normal text-pink-700">
@@ -159,14 +183,17 @@ export default function Home(): JSX.Element {
           )}
 
           {!invalidVal && !invalidChar && (
-            <p><br /></p>
+            <p>
+              <br />
+            </p>
           )}
         </div>
 
-        { /* USER ACTIONS */}
+        {/* USER ACTIONS */}
         <div className="flex justify-center items-center mt-4">
           <button
             type="button"
+            id="solveBtn"
             className="inline-flex items-center px-24 py-3 border-2 border-pink-700 text-md font-medium rounded text-white bg-pink-900 hover:bg-pink-700"
             onClick={() => solveSudoku()}
           >
@@ -176,20 +203,21 @@ export default function Home(): JSX.Element {
         <div className="flex justify-center items-center gap-3">
           <button
             type="button"
+            id="randBtn"
             className="inline-flex mt-2 items-center px-7 py-2 border-2 border-cyan-700 text-md font-medium rounded text-white bg-cyan-900 hover:bg-cyan-700"
-            onClick={() => exampleSudoku()}
+            onClick={() => generateRandomBoard()}
           >
-            Example
+            Random
           </button>
           <button
             type="button"
+            id="clearBtn"
             className="inline-flex mt-2 items-center px-7 py-2 border-2 border-gray-700 text-md font-medium rounded text-white bg-gray-900 hover:bg-gray-700"
             onClick={() => resetEmpty()}
           >
             Clear
           </button>
         </div>
-
       </main>
       <Footer />
     </div>
