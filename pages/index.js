@@ -21,10 +21,13 @@ const initialState = [
 
 export default function Home() {
   const [board, setBoard] = useState([...initialState.map((r) => [...r])]);
-  const [invalid, setInvalid] = useState(false);
+  const [invalidChar, setInvalidChar] = useState(false);
+  const [invalidVal, setInvalidVal] = useState(false);
 
   const solveSudoku = () => {
     const solvedBoard = solver([...board.map((r) => [...r])]);
+    setInvalidChar(false);
+    setInvalidVal(false);
     setBoard(solvedBoard);
   };
 
@@ -33,21 +36,20 @@ export default function Home() {
   };
 
   const resetEmpty = () => {
+    setInvalidChar(false);
+    setInvalidVal(false);
     setBoard([...new Array(9).fill([]).map((_) => [...new Array(9).fill(0)])]);
   };
 
   const updateBoard = (value, row, col) => {
-    const int = Number(value);
-    if (isNaN(int)) return; // set some error state!
-
-    setInvalid(!validInsert(int, row, col, board));
+    if (!validUserInput(value, row, col)) return;
 
     setBoard((prev) => {
       const newState = [
         ...prev.map((rows, rowIdx) => {
           return rows.map((colVal, colIdx) => {
             if (row === rowIdx && col == colIdx) {
-              return (prev[rowIdx][colIdx] = int);
+              return (prev[rowIdx][colIdx] = Number(value));
             } else {
               return colVal;
             }
@@ -56,6 +58,30 @@ export default function Home() {
       ];
       return newState;
     });
+  };
+
+  const validUserInput = (value, row, col) => {
+    setInvalidChar(false);
+    setInvalidVal(false);
+
+    const int = Number(value);
+
+    if (isNaN(int)) {
+      setInvalidChar(true);
+      return false;
+    }
+    if (int === "" || int === 0) {
+      return;
+    }
+    if (int > 9 || int < 1) {
+      setInvalidChar(true);
+      return false;
+    }
+    if (!validInsert(int, row, col, board)) {
+      setInvalidVal(true);
+      return false;
+    }
+    return int;
   };
 
   return (
@@ -71,15 +97,14 @@ export default function Home() {
           <h1 className="text-3xl sm:text-4xl tracking-tight font-extrabold text-white text-center">
             Sudoku Solver
           </h1>
-          <div className="flex justify-center items-center mt-5 sm:mt-10">
-            <div
-              className={classNames("grid grid-cols-9 text-sm shadow")}
-            >
+          <div className="flex justify-center items-center mt-5 sm:mt-8">
+            <div className={classNames("grid grid-cols-9 text-sm shadow")}>
               {board.map((rows, rowIdx) => {
                 return (
                   <Fragment key={rowIdx}>
                     {rows.map((col, colIdx) => {
-                      const even = rowIdx % 2 === 0 ? colIdx % 2 === 0 : colIdx % 2 !== 0
+                      const even =
+                        rowIdx % 2 === 0 ? colIdx % 2 === 0 : colIdx % 2 !== 0;
                       const addBorderR =
                         (colIdx + 1) % 3 === 0 && colIdx + 1 < 9;
                       const addBorderB =
@@ -108,7 +133,25 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex justify-center items-center mt-4 sm:mt-8">
+          <div className="flex justify-center items-center mt-4">
+            {invalidChar && (
+              <p className="font-normal text-pink-700">
+                Hmm, that character isn&#39;t valid 🤨 
+              </p>
+            )}
+
+            {invalidVal && (
+              <p className="font-normal text-yellow-500">
+               Oops, this is a conflict ✋ 
+              </p>
+            )}
+
+            {!invalidVal && !invalidChar && (
+              <p><br /></p> 
+            )}
+          </div>
+
+          <div className="flex justify-center items-center mt-4">
             <button
               type="button"
               className="inline-flex items-center px-24 py-3 border-2 border-pink-700 text-md font-medium rounded text-white bg-pink-900 hover:bg-pink-700"
@@ -136,7 +179,6 @@ export default function Home() {
         </div>
       </main>
       <Footer />
-
     </div>
   );
 }
