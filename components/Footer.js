@@ -3,7 +3,7 @@ export default function Footer() {
     <footer className="bg-cyan-900 border-t-2 border-cyan-700 sticky top-[100vh]">
       <div className="max-w-7xl mx-auto py-4 sm:py-6 px-4 overflow-hidden">
         <div className="mt-2 sm:mt-4 flex justify-center space-x-6">
-          <a key="GitHub" href="" className="text-gray-400 hover:text-black">
+          <a key="GitHub" href="https://github.com/matt-d-webb/sudoku-solver" className="text-gray-400 hover:text-black">
             <span className="sr-only">GitHub</span>
             <svg
               fill="currentColor"
